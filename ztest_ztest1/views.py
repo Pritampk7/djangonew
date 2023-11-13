@@ -991,5 +991,6 @@ def configureDNA(request):
         
         if serializer.is_valid():
             serializer.save()
+        print(serializer)
 
         return Response(json.dumps(data, indent=4))
