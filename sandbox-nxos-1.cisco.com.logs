@@ -1,0 +1,16 @@
+{"command": "show mac address-table", "output": [{"vlan": "-", "mac": "00bf.5f70.1b08", "type": "static", "age": "-", "secure": "F", "ntfy": "F", "ports": "sup-eth1(R)"}, {"vlan": "-", "mac": "00de.adbe.ef00", "type": "static", "age": "-", "secure": "F", "ntfy": "F", "ports": "Eth1/11(R)"}, {"vlan": "-", "mac": "aabb.aabb.aabb", "type": "static", "age": "-", "secure": "F", "ntfy": "F", "ports": "sup-eth1(R)"}]}age": "-",
+            "secure": "F",
+            "ntfy": "F",
+            "ports": "Eth1/11(R)"
+        },
+        {
+            "vlan": "-",
+            "mac": "aabb.aabb.aabb",
+            "type": "static",
+            "age": "-",
+            "secure": "F",
+            "ntfy": "F",
+            "ports": "sup-eth1(R)"
+        }
+    ]
+}

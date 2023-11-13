@@ -1,0 +1,7 @@
+{
+    "command": "show mac address-table",
+    "output": [
+        "                               ^",
+        "% Invalid input detected at '^' marker."
+    ]
+}
