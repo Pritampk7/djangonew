@@ -1,10 +1,12 @@
-from .models import ipaddress, cisco_output, ciscoConfig, device_creds, ipAddressAndHostname, ipWithDetail, hostDetails, cisco_config_result
+from .models import ipaddress, cisco_output, ciscoConfig, device_creds, ipAddressAndHostname, ipWithDetail, hostDetails, cisco_config_result, ciscoDNA
 from .serializers import *
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from setuptools._vendor import more_itertools
-
+#from setuptools._vendor import more_itertools
+from requests.auth import HTTPBasicAuth
+import urllib3
+urllib3.disable_warnings()
 # app level imports
 #
 import threading
@@ -20,10 +22,9 @@ import arubaapi
 
 # exceptions
 from netmiko import ConnectHandler, SSHDetect,Netmiko
-from netmiko.ssh_exception import NetmikoTimeoutException
-from netmiko.ssh_exception import NetmikoAuthenticationException
-from paramiko.ssh_exception import SSHException
-
+from netmiko.exceptions import NetMikoTimeoutException
+from netmiko.exceptions import AuthenticationException
+from netmiko.exceptions import SSHException
 import napalm
 def cisco_ios(cisco_ip, cisco_cmds, username, password, secret, timestamp, device_type):
     display_output = []
@@ -935,5 +936,60 @@ def ciscoConfig_result(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class Junpier:
-    pass
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
+def getnetwork_devices(hostname, dna_host, username, password ):
+    BASE_URL = f'https://{dna_host}'
+    AUTH_URL = '/dna/system/api/v1/auth/token' 
+    response = requests.post(BASE_URL + AUTH_URL, auth=HTTPBasicAuth(username, password), verify=False)
+    token = response.json()['Token']
+    headers = {'X-Auth-Token': token, 'Content-Type': 'application/json'}
+
+    DEVICES_URL = '/dna/intent/api/v1/network-device'
+    query_string_params = {'hostname': hostname}
+    response = requests.get(BASE_URL + DEVICES_URL, headers=headers,
+                        params=query_string_params, verify=False)
+    payload = {"headers":headers, "device_details": response.json()['response']}
+    print(response.json()['response'])
+    
+    return response.json()['response']
+
+from django.core import serializers 
+@api_view(['GET', 'POST'])
+def configureDNA(request):
+    if request.method == 'GET':
+        timestamp = request.GET.get('timestamp','')
+        print(timestamp)
+        
+        dna = ciscoDNA.objects.filter(timestamp=timestamp)
+        serializer = ciscoDNA(dna, many=True)
+        response = list(serializer.data)
+        return Response(response)
+    if request.method == 'POST':
+        username = os.getenv("dna_user")
+        password = os.getenv("dna_pass")
+        dna_host = os.getenv("dna_host")
+        hostname = request.data["data"]["hostname"]
+
+        data = getnetwork_devices(hostname, dna_host,  username, password)
+        print(data)
+        data = {
+            "success": "False",
+            "timestamp": "1643985772051",
+            "data": {
+                "hostname" : "sw2.ciscotest.comm"
+                
+            },
+            "output": data
+
+        }
+        serializer = CiscoDNASerialiazer(data=data)
+        
+        if serializer.is_valid():
+            serializer.save()
+
+        return Response(json.dumps(data, indent=4))

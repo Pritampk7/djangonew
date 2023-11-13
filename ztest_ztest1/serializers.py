@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ipaddress, cisco_output, device_creds, ipAddressAndHostname, ipWithDetail, hostDetails, ciscoConfig, cisco_config_result
+from .models import ipaddress, cisco_output, device_creds, ipAddressAndHostname, ipWithDetail, hostDetails, ciscoConfig, cisco_config_result, ciscoDNA
 
 
 class ip_Serrializers(serializers.ModelSerializer):
@@ -45,3 +45,8 @@ class CiscoConfigOut_Serrializers(serializers.ModelSerializer):
     class Meta:
         model = cisco_config_result
         fields = ['success','timestamp','data']
+
+class CiscoDNASerialiazer(serializers.ModelSerializer):
+    class Meta:
+        model = ciscoDNA
+        fields = ['success','timestamp','data', 'output']

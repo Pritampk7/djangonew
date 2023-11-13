@@ -30,5 +30,6 @@ urlpatterns = [
     path('hostWithDetail/', view.hostDetail),
     path('hostWithDetail/<int:pk>', view.update_device_details),
     path('configConsolePayload/', view.ciscoConfigConsole),
-    path('ciscoConfigOutput/', view.ciscoConfig_result)
+    path('ciscoConfigOutput/', view.ciscoConfig_result),
+    path('ciscoDNAconfig/', view.configureDNA),
 ]

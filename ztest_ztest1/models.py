@@ -68,3 +68,10 @@ class cisco_config_result(models.Model):
     data = models.JSONField(null=False, default=dict)
     timestamp = models.CharField(null=False, default="20", max_length=25)
     success = models.CharField(null=False, default="True", max_length=10)
+
+
+class ciscoDNA(models.Model):
+    data = models.JSONField(null=False, default=dict)
+    timestamp = models.CharField(null=False, default="20", max_length=25)
+    success = models.CharField(null=False, default="True", max_length=10)
+    output = models.JSONField(null=False, default=dict)
